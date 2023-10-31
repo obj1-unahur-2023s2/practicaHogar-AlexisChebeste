@@ -1,0 +1,61 @@
+import habitaciones.*
+import personas.*
+import casa_familias.*
+
+describe "test confort "{
+	const roberto = new Persona(edad=40,tieneHabilidadesDeCocina = false)
+	const maria = new Persona(edad=29,tieneHabilidadesDeCocina = true)
+	const agustin = new Persona(edad=4,tieneHabilidadesDeCocina = false)
+	const usoGeneral = new UsoGeneral()
+	const banio = new Banio()
+	const dormitorio = new Dormitorio(duenios= [roberto], ocupantes=[roberto,agustin])
+	const cocina = new Cocina(metrosCuadrados = 20)
+	
+	
+	test "confort baño ninio 4 años devuelve 2 de confort extra "{
+		assert.equals(12,banio.confort(agustin))
+	}
+	test "confort baño persona mayor años devuelve 4 de confort extra "{
+		assert.equals(14,banio.confort(roberto))
+	}
+	test "confort cocina, persona con habilidades de cocina "{
+		assert.equals(12,cocina.confort(maria))
+	}
+	test "confort cocina, persona sin habilidades de cocina "{
+		assert.equals(10,cocina.confort(roberto))
+	}
+	test "confort de habitacion de uso general, devuelve 10 puntos sin nada extra "{
+		assert.equals(10,usoGeneral.confort(roberto))
+	}
+	test "confort dormitorio, persona que duerme en el dormitorio "{
+		assert.equals(15,dormitorio.confort(roberto))
+	}
+	test "confort dormitorio, persona que no duerme en el mismo "{
+		assert.equals(10,dormitorio.confort(maria))
+	}
+}
+
+describe "test entrar a una habitacion"{
+	const roberto = new Persona(edad=40,tieneHabilidadesDeCocina = false)
+	const maria = new Persona(edad=29,tieneHabilidadesDeCocina = true)
+	const agustin = new Persona(edad=4,tieneHabilidadesDeCocina = false)
+	const juan = new Persona(edad=38,tieneHabilidadesDeCocina = true)
+	const valentina = new Persona(edad=25,tieneHabilidadesDeCocina = false)
+	
+	test "puede entrar a habitacion de uso general"{
+		const usoGeneral = new UsoGeneral(ocupantes =[valentina])
+		assert.that(usoGeneral.puedeEntrar(roberto))
+	}
+	test "puede entrar al banio si hay un menor de 4 años dentro"{
+		const banio = new Banio(ocupantes =[agustin])
+		assert.that(banio.puedeEntrar(roberto))
+	}
+	test "no puede entrar al dormitorio si no estan los que duermen en dicho dormitorio"{
+		const dormitorio = new Dormitorio(duenios= [roberto,valentina], ocupantes=[roberto])
+		assert.notThat(dormitorio.puedeEntrar(juan))
+	}
+	test "no puede entrar a la cocina debido a que ya hay un cocinero dentro"{
+		const cocina = new Cocina(metrosCuadrados = 20, ocupantes=[maria])
+		assert.notThat(cocina.puedeEntrar(juan))
+	}
+}
